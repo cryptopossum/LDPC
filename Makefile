@@ -14,6 +14,9 @@ test: testbench
 testbench: testbench.cc tables_handler.o itls_handler.o mods_handler.o *.hh Makefile
 	$(CXX) $(CXXFLAGS) testbench.cc tables_handler.o itls_handler.o mods_handler.o -o $@
 
+ldpc_tool: ldpc_tool.cc tables_handler.o itls_handler.o mods_handler.o *.hh Makefile
+	$(CXX) $(CXXFLAGS) ldpc_tool.cc tables_handler.o itls_handler.o mods_handler.o -o $@
+
 tables_handler.o: tables_handler.cc *_tables.hh ldpc.hh Makefile
 	$(CXX) $(CXXFLAGS) tables_handler.cc -c -o $@
 
