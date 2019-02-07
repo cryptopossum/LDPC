@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 		ssize_t iosize = BLOCKS * CODE_LEN * sizeof(*code);
 		for ( ssize_t pos=0; pos<iosize; ) {
 			int nr = read(0, code+pos, iosize-pos);
-			if ( ! nr ) break;
+			if ( ! nr ) exit(0);
 			if ( nr < 0 ) fatal("read");
 			pos += nr;
 		}
