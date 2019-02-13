@@ -81,12 +81,6 @@ int main(int argc, char **argv)
 	LDPCDecoder<simd_type, algorithm_type> decode;
 
 	// DVB-S2 MODCOD definitions
-	static const char *mc_constnames[32] = {
-	  0,"QPSK","QPSK","QPSK","QPSK","QPSK","QPSK","QPSK",
-	  "QPSK","QPSK","QPSK","QPSK","8PSK","8PSK","8PSK","8PSK",
-	  "8PSK","8PSK","16APSK","16APSK","16APSK","16APSK","16APSK","16APSK",
-	  "32APSK","32APSK","32APSK","32APSK","32APSK",0,0
-	};
 	static const char *mc_tabnames[2][32] = {
 	  { // Normal frames
 	    0,"B1","B2","B3","B4","B5","B6","B7",
@@ -115,16 +109,6 @@ int main(int argc, char **argv)
 	encode.init(ldpc);
 	decode.init(ldpc);
 	
-	const char *constname = mc_constnames[modcod];
-	if ( ! constname ) fail("unsupported modcod");
-	ModulationInterface<complex_type, code_type> *mod = create_modulation((char*)constname, CODE_LEN);
-	if (!mod) {
-		std::cerr << "no such modulation!" << std::endl;
-		return -1;
-	}
-	const int MOD_BITS = mod->bits();
-	assert(CODE_LEN % MOD_BITS == 0);
-
 	int BLOCKS = 32;
 	code_type *code = new code_type[BLOCKS * CODE_LEN];
 	void *aligned_buffer = aligned_alloc(sizeof(simd_type), sizeof(simd_type) * CODE_LEN);
@@ -174,7 +158,6 @@ int main(int argc, char **argv)
 
 
 	delete ldpc;
-	delete mod;
 
 	free(aligned_buffer);
 	delete[] code;
