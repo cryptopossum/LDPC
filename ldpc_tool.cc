@@ -143,10 +143,12 @@ int main(int argc, char **argv)
 		for (int i = 0; i < BLOCKS * CODE_LEN; ++i)
 			assert(!std::isnan(code[i]));
 
-		ssize_t nw = write(1, code, iosize);
-		if ( ! nw ) break;
-		if ( nw < 0 ) fatal("write");
-		if ( nw != iosize ) fail("partial write");
+		for ( ssize_t pos=0; pos<iosize; ) {
+		  ssize_t nw = write(1, code+pos, iosize-pos);
+		  if ( ! nw ) exit(0);
+		  if ( nw < 0 ) fatal("write");
+		  pos += nw;
+		}
 	}  // main loop
 
 
