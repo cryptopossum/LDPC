@@ -18,10 +18,7 @@ Copyright 2019 <pabr@pabr.org>
 #include <algorithm>
 #include <functional>
 #include "testbench.hh"
-#include "encoder.hh"
 #include "algorithms.hh"
-#include "interleaver.hh"
-#include "modulation.hh"
 
 #if 0
 #include "flooding_decoder.hh"
@@ -32,8 +29,6 @@ static const int TRIALS = 25;
 #endif
 
 LDPCInterface *create_ldpc(char *standard, char prefix, int number);
-Interleaver<code_type> *create_interleaver(char *modulation, char *standard, char prefix, int number);
-ModulationInterface<complex_type, code_type> *create_modulation(char *name, int len);
 
 void fail(const char *msg) {
 	std::cerr << "** plugin: " << msg << std::endl;
@@ -77,11 +72,10 @@ int main(int argc, char **argv)
 	//typedef LambdaMinAlgorithm<simd_type, update_type, 3> algorithm_type;
 	//typedef SumProductAlgorithm<simd_type, update_type> algorithm_type;
 
-	LDPCEncoder<code_type> encode;
 	LDPCDecoder<simd_type, algorithm_type> decode;
 
 	// DVB-S2 MODCOD definitions
-	static const char *mc_tabnames[2][32] = {
+	static const char *mc_tabnames[2][32] = {  // [shortframes][modcod]
 	  { // Normal frames
 	    0,"B1","B2","B3","B4","B5","B6","B7",
 	    "B8","B9","B10","B11","B5","B6","B7","B9",
@@ -106,7 +100,6 @@ int main(int argc, char **argv)
 	const int CODE_LEN = ldpc->code_len();
 	const int DATA_LEN = ldpc->data_len();
 
-	encode.init(ldpc);
 	decode.init(ldpc);
 	
 	int BLOCKS = 32;
@@ -141,7 +134,7 @@ int main(int argc, char **argv)
 					code[(j+n)*CODE_LEN+i] = reinterpret_cast<code_type *>(simd+i)[n];
 			if (count < 0) {
 				iterations += blocks * trials;
-				std::cerr << "decoder failed at converging to a code word!" << std::endl;
+				std::cerr << "decoder failed at converging to a code word in " << trials << " trials" << std::endl;
 			} else {
 				iterations += blocks * (trials - count);
 			}
