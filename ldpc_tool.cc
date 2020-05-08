@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 					code[(j+n)*CODE_LEN+i] = reinterpret_cast<code_type *>(simd+i)[n];
 			if (count < 0) {
 				iterations += blocks * trials;
-				std::cerr << "decoder failed at converging to a code word in " << trials << " trials" << std::endl;
+				// std::cerr << "decoder failed at converging to a code word in " << trials << " trials" << std::endl;
 			} else {
 				iterations += blocks * (trials - count);
 			}
